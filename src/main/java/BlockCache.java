@@ -19,9 +19,33 @@ class BlockCache {
     //the size of the cache to choose the main chain
     private static final int FLUSH_SIZE_LIMIT = 12;
 
+    private Thread blockCacheService;
+    private Thread blockProcessService;
+
+    private Runnable cacheBlockTask = new Runnable() {
+        @Override
+        public void run() {
+            cacheBlock();
+        }
+    };
+
+    private Runnable processBlockTask = new Runnable() {
+        @Override
+        public void run() {
+            processBlock();
+        }
+    };
+
     public BlockCache() {
         this.data = new ConcurrentHashMap<>();
         this.index = new ConcurrentHashMap<>();
+    }
+
+    public void init(){
+        blockCacheService = new Thread(cacheBlockTask, "cacheBlockThread");
+        blockProcessService = new Thread(processBlockTask, "processBlockThread");
+        blockProcessService.start();
+        blockCacheService.start();
     }
 
     void add(CustomizedBlock custBlock) {
