@@ -39,6 +39,7 @@ class BlockCache {
     public BlockCache() {
         this.data = new ConcurrentHashMap<>();
         this.index = new ConcurrentHashMap<>();
+        init();
     }
 
     public void init(){
